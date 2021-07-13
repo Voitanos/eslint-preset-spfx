@@ -98,3 +98,16 @@ const GULPDELTA_CONTENT = fs.readFileSync(GULPDELTA_FILEPATH, 'utf8');
 
 // update file contents
 fs.writeFileSync(GULPFILE_FILEPATH, gulpFileData.replace(/build.initialize\(require\('gulp'\)\);/g, GULPDELTA_CONTENT));
+
+/**
+ *
+ * STEP 4: DELETE TSLINT.JSON
+ *
+ */
+ console.log('ESLINT PRESET POSTINSTALL STEP 4 of 4...')
+ console.log(`INFO: Deleting tslint.info unnecessary file`);
+
+ const TSLINT_FILEPATH = path.resolve(path.join(projectPath, 'tslint.json'));
+
+ // delete file
+ fs.unlinkSync(TSLINT_FILEPATH);
