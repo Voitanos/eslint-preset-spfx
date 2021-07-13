@@ -1,14 +1,11 @@
 #!/usr/bin/env node
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+// bail on postinstall if this is a build
 if (process.env.IS_BUILD) {
     console.log('skipping POSTINSTALL script');
     process.exit(0);
 }
-/*
-* if jest.config.json not present, add it
-* update package.json with new test script
-*/
 var fs = require("fs");
 var path = require("path");
 var CURR_DIR = path.resolve(__dirname);
@@ -37,83 +34,58 @@ var paths = nest.map(function (m) { return ".."; });
 var projectPath = path.resolve(path.join(__dirname, paths.join('/')));
 /**
  *
- * STEP 1: JEST CONFIG FILE
+ * STEP 1: ESLINT CONFIG FILE
  *
  */
-console.log('JEST PRESET POSTINSTALL STEP 1 of 4...');
-console.log('INFO: Adding Jest configuration file to: ./config/jest.config.json');
-var jestConfigFilePath = path.resolve(path.join(projectPath, 'config', 'jest.config.json'));
-// check if jest config file present
-if (fs.existsSync(jestConfigFilePath)) {
-    console.log('      .. jest.config.json exists... verifying properties');
-    // exists, check the properties are correct
-    var jestConfigFile = require(jestConfigFilePath);
-    if (!jestConfigFile.preset || jestConfigFile.preset !== '@voitanos/jest-preset-spfx') {
-        console.warn('ACTION REQUIRED: ensure jest.config.json has "preset": "@voitanos/jest-preset-spfx"');
-    }
-    if (!jestConfigFile.rootDir || jestConfigFile.rootDir !== '../src') {
-        console.warn('ACTION REQUIRED: ensure jest.config.json has "rootDir": "../src"');
-    }
-}
-else {
-    // doesn't exist, so copy it in
-    console.log('INFO: jest.config.json not found; creating it');
-    // get path to sample file
-    var jestConfigTemplate = path.join(CURR_DIR, '..', 'resources', 'jest.config.json');
-    // copy file in
-    fs.copyFileSync(jestConfigTemplate, jestConfigFilePath);
-}
+console.log('ESLINT PRESET POSTINSTALL STEP 1 of 4...');
+var CONFIG_FILENAME = 'eslint.json';
+console.log("INFO: Adding ESLint configuration file to: ./config/" + CONFIG_FILENAME);
+var configFilePath = path.resolve(path.join(projectPath, 'config', CONFIG_FILENAME));
+// // check if config file present
+// if (fs.existsSync(configFilePath)) {
+//   console.log(`      .. ${CONFIG_FILENAME} exists! No changes required.`);
+// } else {
+//   // doesn't exist, so copy it in
+//   console.log(`INFO: ${CONFIG_FILENAME} not found; creating it`);
+//   // get path to sample file
+//   const configTemplate = path.join(CURR_DIR, '..', 'resources', `${CONFIG_FILENAME}`);
+//   // copy file in
+//   fs.copyFileSync(configTemplate, configFilePath);
+// }
 /**
  *
- * STEP 2: PACKAGE.JSON
- * Check scripts.test property
+ * STEP 2: ESLINT IGNORE FILE
  *
  */
-console.log('JEST PRESET POSTINSTALL STEP 2 of 4...');
-console.log('INFO: Updating NPM script \'test\' to use Jest.');
-var packageFilePath = path.resolve(path.join(projectPath, 'package.json'));
-// check setting on package.json/scripts/test
-var packageFile = require(packageFilePath);
-if (!packageFile.scripts || !packageFile.scripts.test || packageFile.scripts.test === 'gulp test') {
-    console.log('INFO" package.json script/test currently set to default SPFx project; updating to use jest');
-    /** update package.json */
-    // remove current test
-    delete packageFile.scripts.test;
-    // add both new scripts
-    packageFile.scripts["test"] = "./node_modules/.bin/jest --config ./config/jest.config.json";
-    packageFile.scripts["test:watch"] = "./node_modules/.bin/jest --config ./config/jest.config.json --watchAll";
-    // save it
-    fs.writeFileSync(packageFilePath, JSON.stringify(packageFile, null, 2));
-    console.log('INFO: package.json scripts updated for Jest testing');
-    console.log('     .. run "npm test" or "npm test:watch" to run Jest tests');
-}
+console.log('ESLINT PRESET POSTINSTALL STEP 2 of 4...');
+var IGNORE_FILENAME = '.eslintignore';
+console.log("INFO: Adding ESLint ignore file to: ./" + IGNORE_FILENAME);
+var ignoreFilePath = path.resolve(path.join(projectPath, IGNORE_FILENAME));
+// check if file present
+// if (fs.existsSync(ignoreFilePath)) {
+//   console.log(`      .. ${IGNORE_FILENAME} exists! No changes required.`);
+// } else {
+//   // doesn't exist, so copy it in
+//   console.log(`INFO: ${IGNORE_FILENAME} not found; creating it`);
+//   // get path to sample file
+//   const configTemplate = path.join(CURR_DIR, '..', 'resources', IGNORE_FILENAME);
+//   // copy file in
+//   fs.copyFileSync(configTemplate, ignoreFilePath);
+// }
 /**
  *
- * STEP 2: TSCONFIG.JSON
- * Verify @types/jest is present in tsconfig include
+ * STEP 3: UPDATE GULPFILE.JS WITH ESLINT TASK
  *
  */
-console.log('JEST PRESET POSTINSTALL STEP 3 of 4...');
-console.log('INFO: Ensure tsconfig.json includes \'@types/jest\' in the `types` property');
-var tsconfigFilePath = path.resolve(path.join(projectPath, 'tsconfig.json'));
-// check if @types/jest is present in includes
-var tsconfigFile = require(tsconfigFilePath);
-if (!tsconfigFile.compilerOptions.types.includes('@types/jest')) {
-    console.log('      .. Jest type declarations not present...');
-    // add it
-    tsconfigFile.compilerOptions.types.push('@types/jest');
-    // save it
-    fs.writeFileSync(tsconfigFilePath, JSON.stringify(tsconfigFile, null, 2));
-    console.log('INFO: tsconfig.json updated to include Jest type declarations');
-}
-/**
- *
- * STEP 4: Install JEST
- * Install the correct version of JEST
- *
- */
-console.log('JEST PRESET POSTINSTALL STEP 4 of 4...');
-var thisPackageFile = require('../package.json');
-var jestVersion = thisPackageFile.peerDependencies.jest;
-console.log("ACTION REQUIRED: Install Jest v" + jestVersion + " by executing the following command in the console:");
-console.log("      npm install jest@" + jestVersion + " --save-dev --save-exact");
+console.log('ESLINT PRESET POSTINSTALL STEP 3 of 4...');
+var GULPFILE_FILENAME = 'gulpfile.js';
+console.log("INFO: Updating ./" + GULPFILE_FILENAME + " add eslint task");
+var gulpFileData = fs.readFileSync(GULPFILE_FILENAME, 'utf8');
+// read in all data from the template file
+var GULPDELTA_FILEPATH = path.join(CURR_DIR, '..', 'resources', 'gulpfile.delta.js');
+var GULPDELTA_CONTENT = fs.readFileSync(GULPDELTA_FILEPATH, 'utf8');
+// update file contents
+var result = gulpFileData.replace(/build.initialize\(require\('gulp'\)\);/g, GULPDELTA_CONTENT);
+console.log("new gulp file");
+console.log(result);
+fs.writeFileSync(GULPFILE_FILENAME, result);
