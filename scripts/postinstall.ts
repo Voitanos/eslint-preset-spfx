@@ -91,10 +91,10 @@ console.log(`INFO: Updating gulpfile.js add eslint task`);
 
 const GULPFILE_FILEPATH = path.resolve(path.join(projectPath, 'gulpfile.js'));
 
-let gulpFileData = fs.readFileSync(GULPFILE_FILENAME, 'utf8');
+let gulpFileData = fs.readFileSync(GULPFILE_FILEPATH, 'utf8');
 // read in all data from the template file
 const GULPDELTA_FILEPATH = path.join(CURR_DIR, '..', 'resources', 'gulpfile.delta.js');
 const GULPDELTA_CONTENT = fs.readFileSync(GULPDELTA_FILEPATH, 'utf8');
 
 // update file contents
-fs.writeFileSync(GULPFILE_FILENAME, gulpFileData.replace(/build.initialize\(require\('gulp'\)\);/g, GULPDELTA_CONTENT));
+fs.writeFileSync(GULPFILE_FILEPATH, gulpFileData.replace(/build.initialize\(require\('gulp'\)\);/g, GULPDELTA_CONTENT));
