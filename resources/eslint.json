@@ -24,6 +24,6 @@
     // NOTE: To use the ESLint equivalent rules that default SPFx projects use:
     //       1. uncomment the next immediate line
     //       2. append a comma to the line immediately before this comment block
-    ,"./eslint.spfx.json"
+    // "./eslint.spfx.json"
   ]
 }
