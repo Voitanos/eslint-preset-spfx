@@ -62,9 +62,9 @@ const SPFX_RULES_FILENAME = 'eslint.spfx.json';
 console.log('');
 console.log(`INFO: Adding ESLint SPFx rules file to: ./config/${SPFX_RULES_FILENAME}`);
 
-const configFilePath = path.resolve(path.join(projectPath, 'config', SPFX_RULES_FILENAME));
+const spfxRulesPath = path.resolve(path.join(projectPath, 'config', SPFX_RULES_FILENAME));
 // check if config file present
-if (fs.existsSync(configFilePath)) {
+if (fs.existsSync(spfxRulesPath)) {
   console.log(`      .. ${SPFX_RULES_FILENAME} exists! No changes required.`);
 } else {
   // doesn't exist, so copy it in
@@ -73,7 +73,7 @@ if (fs.existsSync(configFilePath)) {
   // get path to sample file
   const configTemplate = path.join(CURR_DIR, '..', 'resources', `${SPFX_RULES_FILENAME}`);
   // copy file in
-  fs.copyFileSync(configTemplate, configFilePath);
+  fs.copyFileSync(configTemplate, spfxRulesPath);
 }
 
 /**
