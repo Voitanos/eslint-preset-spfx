@@ -126,7 +126,7 @@ fs.writeFileSync(GULPFILE_FILEPATH, gulpFileData.replace(/build.initialize\(requ
 */
 console.log('');
 console.log('ESLINT PRESET POSTINSTALL STEP 4 of 4...')
-console.log(`INFO: Deleting tslint.info unnecessary file`);
+console.log(`INFO: Deleting tslint.info unnecessary file (if present)`);
 
 const TSLINT_FILEPATH = path.resolve(path.join(projectPath, 'tslint.json'));
 
